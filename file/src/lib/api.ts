@@ -2,6 +2,15 @@ import axios from 'axios';
 import { ConversionResponse, ConversionType, HealthStatus, UploadProgress } from '@/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+
+// Define our own config type to avoid Axios version issues
+interface RequestConfig {
+  headers?: Record<string, string>;
+  timeout?: number;
+  onUploadProgress?: (progressEvent: any) => void;
+  responseType?: string;
+}
+
 // Create axios instance with better error handling
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -53,7 +62,7 @@ export class ApiService {
     try {
       console.log('Checking API health at:', `${API_BASE_URL}/health`);
       
-      const response = await apiClient.get('/health');
+      const response = await apiClient.get<HealthStatus>('/health');
       
       console.log('Health check successful:', response.data);
       return response.data;
@@ -82,21 +91,26 @@ export class ApiService {
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
-      const response = await apiClient.post('/convert/pdf-to-word', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 300000, // 5 minutes for conversions
-        onUploadProgress: (event: any) => {
-          if (onProgress && event.total) {
-            const progress: UploadProgress = {
-              loaded: event.loaded,
-              total: event.total,
-              percentage: Math.round((event.loaded * 100) / event.total)
-            };
-            onProgress(progress);
-          }
+    const requestConfig: RequestConfig = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000, // 5 minutes for conversions
+    };
+
+    if (onProgress) {
+      requestConfig.onUploadProgress = (event: any) => {
+        if (event.total) {
+          const progress: UploadProgress = {
+            loaded: event.loaded,
+            total: event.total,
+            percentage: Math.round((event.loaded * 100) / event.total)
+          };
+          onProgress(progress);
         }
-      });
+      };
+    }
+
+    try {
+      const response = await apiClient.post<ConversionResponse>('/convert/pdf-to-word', formData, requestConfig);
       return response.data;
     } catch (error: any) {
       if (error.response?.data?.detail) {
@@ -116,21 +130,26 @@ export class ApiService {
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
-      const response = await apiClient.post('/convert/word-to-pdf', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 300000, // 5 minutes for conversions
-        onUploadProgress: (event: any) => {
-          if (onProgress && event.total) {
-            const progress: UploadProgress = {
-              loaded: event.loaded,
-              total: event.total,
-              percentage: Math.round((event.loaded * 100) / event.total)
-            };
-            onProgress(progress);
-          }
+    const requestConfig: RequestConfig = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000, // 5 minutes for conversions
+    };
+
+    if (onProgress) {
+      requestConfig.onUploadProgress = (event: any) => {
+        if (event.total) {
+          const progress: UploadProgress = {
+            loaded: event.loaded,
+            total: event.total,
+            percentage: Math.round((event.loaded * 100) / event.total)
+          };
+          onProgress(progress);
         }
-      });
+      };
+    }
+
+    try {
+      const response = await apiClient.post<ConversionResponse>('/convert/word-to-pdf', formData, requestConfig);
       return response.data;
     } catch (error: any) {
       if (error.response?.data?.detail) {
@@ -152,21 +171,26 @@ export class ApiService {
       formData.append('files', file);
     });
 
-    try {
-      const response = await apiClient.post('/convert/merge-pdf', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 300000, // 5 minutes for conversions
-        onUploadProgress: (event: any) => {
-          if (onProgress && event.total) {
-            const progress: UploadProgress = {
-              loaded: event.loaded,
-              total: event.total,
-              percentage: Math.round((event.loaded * 100) / event.total)
-            };
-            onProgress(progress);
-          }
+    const requestConfig: RequestConfig = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000, // 5 minutes for conversions
+    };
+
+    if (onProgress) {
+      requestConfig.onUploadProgress = (event: any) => {
+        if (event.total) {
+          const progress: UploadProgress = {
+            loaded: event.loaded,
+            total: event.total,
+            percentage: Math.round((event.loaded * 100) / event.total)
+          };
+          onProgress(progress);
         }
-      });
+      };
+    }
+
+    try {
+      const response = await apiClient.post<ConversionResponse>('/convert/merge-pdf', formData, requestConfig);
       return response.data;
     } catch (error: any) {
       if (error.response?.data?.detail) {
@@ -186,21 +210,26 @@ export class ApiService {
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
-      const response = await apiClient.post('/convert/pdf-to-images', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        timeout: 300000, // 5 minutes for conversions
-        onUploadProgress: (event: any) => {
-          if (onProgress && event.total) {
-            const progress: UploadProgress = {
-              loaded: event.loaded,
-              total: event.total,
-              percentage: Math.round((event.loaded * 100) / event.total)
-            };
-            onProgress(progress);
-          }
+    const requestConfig: RequestConfig = {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000, // 5 minutes for conversions
+    };
+
+    if (onProgress) {
+      requestConfig.onUploadProgress = (event: any) => {
+        if (event.total) {
+          const progress: UploadProgress = {
+            loaded: event.loaded,
+            total: event.total,
+            percentage: Math.round((event.loaded * 100) / event.total)
+          };
+          onProgress(progress);
         }
-      });
+      };
+    }
+
+    try {
+      const response = await apiClient.post<ConversionResponse>('/convert/pdf-to-images', formData, requestConfig);
       return response.data;
     } catch (error: any) {
       if (error.response?.data?.detail) {
@@ -219,7 +248,7 @@ export class ApiService {
 
   static async downloadFile(filename: string): Promise<Blob> {
     try {
-      const response = await apiClient.get(`/download/${filename}`, {
+      const response = await apiClient.get<Blob>(`/download/${filename}`, {
         responseType: 'blob',
         timeout: 60000, // 1 minute for downloads
       });
