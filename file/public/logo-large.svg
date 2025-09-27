@@ -1,0 +1,111 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Enhanced gradients -->
+    <radialGradient id="primaryGradient" cx="0.5" cy="0.3" r="0.9">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="40%" stop-color="#8B5CF6"/>
+      <stop offset="80%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#F43F5E"/>
+    </radialGradient>
+
+    <linearGradient id="docGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0EA5E9"/>
+      <stop offset="50%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1E40AF"/>
+    </linearGradient>
+
+    <linearGradient id="convertGradient" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Main circular background -->
+  <circle cx="80" cy="80" r="75" fill="url(#primaryGradient)" opacity="0.95"/>
+
+  <!-- Subtle inner rings for depth -->
+  <circle cx="80" cy="80" r="65" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <circle cx="80" cy="80" r="50" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+
+  <!-- Central document icon group -->
+  <g transform="translate(80, 80)">
+    <!-- Main document -->
+    <g transform="translate(-25, -30)">
+      <!-- Document body -->
+      <rect x="0" y="10" width="40" height="50" rx="3" fill="url(#docGradient)" stroke="white" stroke-width="2"/>
+
+      <!-- Document corner fold -->
+      <path d="M30 10 L40 10 L40 20 Z" fill="rgba(255,255,255,0.4)"/>
+      <path d="M30 10 L30 20 L40 20" stroke="rgba(0,0,0,0.15)" stroke-width="1" fill="none"/>
+
+      <!-- Document content lines -->
+      <rect x="6" y="20" width="25" height="2" rx="1" fill="rgba(255,255,255,0.9)"/>
+      <rect x="6" y="26" width="20" height="2" rx="1" fill="rgba(255,255,255,0.7)"/>
+      <rect x="6" y="32" width="22" height="2" rx="1" fill="rgba(255,255,255,0.7)"/>
+      <rect x="6" y="38" width="18" height="2" rx="1" fill="rgba(255,255,255,0.5)"/>
+      <rect x="6" y="44" width="16" height="2" rx="1" fill="rgba(255,255,255,0.5)"/>
+    </g>
+
+    <!-- Conversion arrows with enhanced design -->
+    <g>
+      <!-- Circular conversion path -->
+      <path d="M -30 -12 Q -40 -25 -20 -35 Q 0 -40 20 -35 Q 40 -25 30 -12"
+            stroke="url(#convertGradient)" stroke-width="4" fill="none"
+            stroke-linecap="round" filter="url(#glow)"/>
+      <path d="M 30 12 Q 40 25 20 35 Q 0 40 -20 35 Q -40 25 -30 12"
+            stroke="url(#convertGradient)" stroke-width="4" fill="none"
+            stroke-linecap="round" filter="url(#glow)"/>
+
+      <!-- Enhanced arrow heads -->
+      <polygon points="26,-8 35,-12 30,-18" fill="url(#convertGradient)" filter="url(#glow)"/>
+      <polygon points="-26,8 -35,12 -30,18" fill="url(#convertGradient)" filter="url(#glow)"/>
+    </g>
+
+    <!-- Format badges -->
+    <g>
+      <!-- PDF badge -->
+      <rect x="-50" y="-8" width="18" height="12" rx="2" fill="rgba(239, 68, 68, 0.95)" stroke="white" stroke-width="1"/>
+      <text x="-41" y="1" font-family="Arial, sans-serif" font-size="5" font-weight="bold" fill="white" text-anchor="middle">PDF</text>
+
+      <!-- Multiple format badge -->
+      <rect x="32" y="-8" width="18" height="12" rx="2" fill="rgba(34, 197, 94, 0.95)" stroke="white" stroke-width="1"/>
+      <text x="41" y="1" font-family="Arial, sans-serif" font-size="4" font-weight="bold" fill="white" text-anchor="middle">ALL</text>
+    </g>
+  </g>
+
+  <!-- Decorative elements around the main circle -->
+  <g opacity="0.7">
+    <!-- Corner sparkles -->
+    <circle cx="30" cy="30" r="3" fill="rgba(255,255,255,0.8)"/>
+    <circle cx="130" cy="40" r="2" fill="rgba(255,255,255,0.6)"/>
+    <circle cx="25" cy="130" r="2" fill="rgba(255,255,255,0.6)"/>
+    <circle cx="135" cy="125" r="3" fill="rgba(255,255,255,0.8)"/>
+
+    <!-- Star sparkles -->
+    <g stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none">
+      <path d="M20 60 L22 62 L20 64 L18 62 Z"/>
+      <path d="M140 100 L142 102 L140 104 L138 102 Z"/>
+      <path d="M120 20 L122 22 L120 24 L118 22 Z"/>
+      <path d="M40 140 L42 142 L40 144 L38 142 Z"/>
+    </g>
+
+    <!-- Floating dots -->
+    <circle cx="15" cy="80" r="1.5" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="145" cy="80" r="1.5" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="80" cy="15" r="1.5" fill="rgba(255,255,255,0.5)"/>
+    <circle cx="80" cy="145" r="1.5" fill="rgba(255,255,255,0.5)"/>
+  </g>
+
+  <!-- Subtle outer glow -->
+  <circle cx="80" cy="80" r="78" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+</svg>

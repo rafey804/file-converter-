@@ -73,7 +73,7 @@ export default function FileUpload({
     console.log(`${type}: ${message}`);
   };
 
-  // Create accept object with proper typing
+  // UPDATED: Create accept object with proper typing including PNG support
   const acceptConfig: Record<string, string[]> = {};
   
   if (acceptedFileTypes.includes('pdf')) {
@@ -87,6 +87,15 @@ export default function FileUpload({
   if (acceptedFileTypes.includes('doc')) {
     acceptConfig['application/msword'] = ['.doc'];
   }
+
+  // NEW: Add PNG support
+  if (acceptedFileTypes.includes('png')) {
+    acceptConfig['image/png'] = ['.png'];
+  }
+  // NEW: Add WAV support
+if (acceptedFileTypes.includes('wav')) {
+  acceptConfig['audio/wav'] = ['.wav'];
+}
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -105,35 +114,51 @@ export default function FileUpload({
   };
 
   const getFileIcon = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    switch (extension) {
-      case 'pdf':
-        return (
-          <div className="w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 rounded-xl flex items-center justify-center shadow-md">
-            <svg className="w-7 h-7 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
-            </svg>
-          </div>
-        );
-      case 'docx':
-      case 'doc':
-        return (
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center shadow-md">
-            <svg className="w-7 h-7 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-            </svg>
-          </div>
-        );
-      default:
-        return (
-          <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center shadow-md">
-            <svg className="w-7 h-7 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-            </svg>
-          </div>
-        );
-    }
-  };
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'pdf':
+      return (
+        <div className="w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 rounded-xl flex items-center justify-center shadow-md">
+          <svg className="w-7 h-7 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+          </svg>
+        </div>
+      );
+    case 'docx':
+    case 'doc':
+      return (
+        <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center shadow-md">
+          <svg className="w-7 h-7 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+          </svg>
+        </div>
+      );
+    case 'png':
+      return (
+        <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center shadow-md">
+          <svg className="w-7 h-7 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+          </svg>
+        </div>
+      );
+    case 'wav':
+      return (
+        <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-indigo-200 rounded-xl flex items-center justify-center shadow-md">
+          <svg className="w-7 h-7 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v9.114A4.369 4.369 0 005 14c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v5.894A4.37 4.37 0 0015 12c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z" />
+          </svg>
+        </div>
+      );
+    default:
+      return (
+        <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center shadow-md">
+          <svg className="w-7 h-7 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+          </svg>
+        </div>
+      );
+  }
+};
 
   const getStatusInfo = (fileWithId: FileWithId) => {
     switch (fileWithId.status) {
@@ -340,7 +365,7 @@ export default function FileUpload({
             )}
           </div>
           
-          <div className="grid gap-4">
+          <div className="space-y-3 sm:space-y-4">
             {selectedFiles.map((fileWithId) => {
               const statusInfo = getStatusInfo(fileWithId);
               
@@ -348,14 +373,85 @@ export default function FileUpload({
                 <div
                   key={fileWithId.id}
                   className={`
-                    bg-white border-2 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg
+                    bg-white border-2 rounded-xl sm:rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-lg
                     ${fileWithId.status === 'completed' ? 'border-green-200 bg-green-50' : 
                       fileWithId.status === 'error' ? 'border-red-200 bg-red-50' : 
                       fileWithId.status === 'processing' || fileWithId.status === 'uploading' ? 'border-blue-200 bg-blue-50' : 
                       'border-gray-200 hover:border-gray-300'}
                   `}
                 >
-                  <div className="flex items-center justify-between">
+                  {/* Mobile Layout */}
+                  <div className="block lg:hidden">
+                    {/* File Info */}
+                    <div className="flex items-start space-x-3 mb-4">
+                      <div className="w-10 h-10 bg-gradient-to-br from-green-100 to-green-200 rounded-lg flex items-center justify-center shadow-md flex-shrink-0">
+                        <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900 text-sm sm:text-base break-all">
+                          {fileWithId.file.name}
+                        </p>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-1 space-y-1 sm:space-y-0">
+                          <p className="text-xs sm:text-sm text-gray-500">
+                            {formatFileSize(fileWithId.file.size)}
+                          </p>
+                          <div className={`inline-flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${statusInfo.color} ${statusInfo.bgColor}`}>
+                            {statusInfo.icon}
+                            <span>{statusInfo.text}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons Mobile */}
+                    <div className="flex flex-col space-y-2">
+                      {/* Download Button */}
+                      {fileWithId.status === 'completed' && fileWithId.downloadUrl && (
+                        <a
+                          href={fileWithId.downloadUrl}
+                          download
+                          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 
+                                   text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 
+                                   shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m1-4H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V8a2 2 0 00-2-2z" />
+                          </svg>
+                          <span>Download</span>
+                        </a>
+                      )}
+
+                      {/* Retry Button */}
+                      {fileWithId.status === 'error' && (
+                        <button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium 
+                                         transition-all duration-300 flex items-center justify-center space-x-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          <span>Retry</span>
+                        </button>
+                      )}
+
+                      {/* Remove Button */}
+                      {(fileWithId.status === 'pending' || fileWithId.status === 'error') && (
+                        <button
+                          onClick={() => removeFile(fileWithId.id)}
+                          className="self-end bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 p-2 rounded-lg transition-colors"
+                          title="Remove file"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Desktop Layout */}
+                  <div className="hidden lg:flex items-center justify-between">
                     {/* File Info */}
                     <div className="flex items-center space-x-4 flex-1 min-w-0">
                       {getFileIcon(fileWithId.file.name)}
@@ -376,7 +472,7 @@ export default function FileUpload({
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
+                    {/* Action Buttons Desktop */}
                     <div className="flex items-center space-x-3">
                       {/* Download Button */}
                       {fileWithId.status === 'completed' && fileWithId.downloadUrl && (
@@ -478,11 +574,11 @@ export default function FileUpload({
           <ul className="text-blue-800 space-y-2 text-sm">
             <li className="flex items-start">
               <span className="text-blue-500 mr-2 mt-0.5">•</span>
-              <span>Use high-quality PDF files for better conversion accuracy</span>
+              <span>Use high-quality images for better conversion results</span>
             </li>
             <li className="flex items-start">
               <span className="text-blue-500 mr-2 mt-0.5">•</span>
-              <span>Text-based PDFs work better than scanned documents</span>
+              <span>PNG files will be converted to WebP format for better compression</span>
             </li>
             <li className="flex items-start">
               <span className="text-blue-500 mr-2 mt-0.5">•</span>

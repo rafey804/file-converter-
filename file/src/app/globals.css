@@ -99,11 +99,31 @@
   .text-shadow {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
-  
+
   /* Background patterns */
   .bg-pattern-dots {
     background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,.15) 1px, transparent 0);
     background-size: 20px 20px;
+  }
+
+  /* Glass morphism effects */
+  .bg-noise {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.15) 1px, transparent 0),
+      radial-gradient(circle at 3px 3px, rgba(255,255,255,.1) 1px, transparent 0);
+    background-size: 10px 10px, 15px 15px;
+  }
+
+  .glass-effect {
+    backdrop-filter: blur(16px) saturate(180%);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.125);
+  }
+
+  .glass-header {
+    backdrop-filter: blur(20px) saturate(200%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.4));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   /* Hide scrollbar but keep functionality */

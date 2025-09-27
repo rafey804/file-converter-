@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 // Types for analytics events
@@ -33,47 +33,48 @@ export default function Analytics() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const initialized = useRef(false);
+  const [userId, setUserId] = useState<string>('');
+  const [cookieConsent, setCookieConsent] = useState<string | null>(null);
 
+  // Generate user ID without localStorage
   const generateUserId = useCallback((): string => {
-    // Generate anonymous user ID for analytics
     if (typeof window === 'undefined') return '';
     
-    const userId = localStorage.getItem('analytics_user_id');
-    if (userId) return userId;
-    
-    const newUserId = 'user_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('analytics_user_id', newUserId);
-    return newUserId;
+    // Use sessionStorage instead of localStorage, or generate temporary ID
+    let tempUserId = sessionStorage.getItem('temp_analytics_id');
+    if (!tempUserId) {
+      tempUserId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+      try {
+        sessionStorage.setItem('temp_analytics_id', tempUserId);
+      } catch (e) {
+        // Fallback if sessionStorage is blocked
+        tempUserId = 'user_' + Math.random().toString(36).substr(2, 9);
+      }
+    }
+    return tempUserId;
   }, []);
 
+  // Initialize user ID
+  useEffect(() => {
+    setUserId(generateUserId());
+  }, [generateUserId]);
+
   const trackCustomEvent = useCallback((event: AnalyticsEvent) => {
-    // Google Analytics event
+    // Only track to Google Analytics - remove custom endpoint that causes 404s
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', event.action, {
         event_category: event.category,
         event_label: event.label,
-        value: event.value
+        value: event.value,
+        custom_user_id: userId || 'anonymous'
       });
     }
 
-    // Send to custom analytics endpoint
-    if (typeof window !== 'undefined') {
-      fetch('/api/analytics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...event,
-          timestamp: Date.now(),
-          user_id: generateUserId(),
-          page: pathname,
-          referrer: document.referrer,
-          user_agent: navigator.userAgent
-        })
-      }).catch(err => console.debug('Analytics error:', err));
+    // Optional: Log to console for debugging (remove in production)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Analytics Event:', event);
     }
-  }, [pathname, generateUserId]);
+  }, [userId]);
 
   const trackPageView = useCallback((path: string) => {
     // Google Analytics page view
@@ -81,22 +82,18 @@ export default function Analytics() {
       window.gtag('event', 'page_view', {
         page_title: document.title,
         page_location: window.location.href,
-        page_path: path
+        page_path: path,
+        user_id: userId || 'anonymous'
       });
     }
 
-    // Microsoft Clarity page view
+    // Microsoft Clarity page view (only if Clarity ID is properly set)
     if (typeof window !== 'undefined' && window.clarity) {
       window.clarity('set', 'page', path);
     }
 
-    // Custom analytics endpoint (if you have one)
-    trackCustomEvent({
-      action: 'page_view',
-      category: 'Navigation',
-      label: path
-    });
-  }, [trackCustomEvent]);
+    console.log('Page view tracked:', path);
+  }, [userId]);
 
   const generateTransactionId = useCallback((): string => {
     return 'txn_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
@@ -259,21 +256,22 @@ export default function Analytics() {
   }, [trackCustomEvent, generateTransactionId]);
 
   const initializeAnalytics = useCallback(() => {
-    // Google Analytics 4 initialization
+    // Google Analytics 4 initialization with correct ID
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('config', 'G-XXXXXXXXXX', {
+      window.gtag('config', 'G-918R7EMM6E', {
         page_title: document.title,
         page_location: window.location.href,
         anonymize_ip: true,
         allow_google_signals: false,
         allow_ad_personalization_signals: false,
-        send_page_view: false // We'll handle this manually
+        send_page_view: false, // We'll handle this manually
+        user_id: userId || 'anonymous'
       });
     }
 
-    // Microsoft Clarity initialization
-    if (typeof window !== 'undefined' && window.clarity) {
-      window.clarity('set', 'user_id', generateUserId());
+    // Microsoft Clarity initialization (only if you have actual Clarity ID)
+    if (typeof window !== 'undefined' && window.clarity && userId) {
+      window.clarity('set', 'user_id', userId);
     }
 
     // HubSpot tracking (if applicable)
@@ -284,23 +282,34 @@ export default function Analytics() {
     // Custom event listeners for user interactions
     const cleanup = setupEventListeners();
     return cleanup;
-  }, [pathname, generateUserId, setupEventListeners]);
+  }, [pathname, userId, setupEventListeners]);
+
+  // Check cookie consent without localStorage
+  useEffect(() => {
+    // Use a more CSP-friendly approach
+    try {
+      const consent = sessionStorage.getItem('cookie_consent') || 'not_set';
+      setCookieConsent(consent);
+    } catch (e) {
+      setCookieConsent('not_set');
+    }
+  }, []);
 
   // Initialize analytics on mount
   useEffect(() => {
-    if (!initialized.current) {
+    if (!initialized.current && userId) {
       const cleanup = initializeAnalytics();
       initialized.current = true;
       return cleanup;
     }
-  }, [initializeAnalytics]);
+  }, [initializeAnalytics, userId]);
 
   // Track page views
   useEffect(() => {
-    if (initialized.current) {
+    if (initialized.current && userId) {
       trackPageView(pathname);
     }
-  }, [pathname, searchParams, trackPageView]);
+  }, [pathname, searchParams, trackPageView, userId]);
 
   // Performance monitoring
   useEffect(() => {
@@ -329,30 +338,36 @@ export default function Analytics() {
       }
     });
 
-    observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] });
+    try {
+      observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] });
+    } catch (e) {
+      console.log('Performance observer not supported');
+    }
 
     // Track page load performance
     const handleLoad = () => {
       setTimeout(() => {
-        // Use the newer Performance API approach
-        const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        
-        if (perfData && perfData.loadEventEnd && perfData.fetchStart) {
-          trackCustomEvent({
-            action: 'page_load_time',
-            category: 'Performance',
-            label: pathname,
-            value: Math.round(perfData.loadEventEnd - perfData.fetchStart)
-          });
-        } else {
-          // Fallback for older browsers
-          const loadTime = performance.now();
-          trackCustomEvent({
-            action: 'page_load_time',
-            category: 'Performance',
-            label: pathname,
-            value: Math.round(loadTime)
-          });
+        try {
+          const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+          
+          if (perfData && perfData.loadEventEnd && perfData.fetchStart) {
+            trackCustomEvent({
+              action: 'page_load_time',
+              category: 'Performance',
+              label: pathname,
+              value: Math.round(perfData.loadEventEnd - perfData.fetchStart)
+            });
+          } else {
+            const loadTime = performance.now();
+            trackCustomEvent({
+              action: 'page_load_time',
+              category: 'Performance',
+              label: pathname,
+              value: Math.round(loadTime)
+            });
+          }
+        } catch (e) {
+          console.log('Performance measurement failed:', e);
         }
       }, 0);
     };
@@ -360,7 +375,11 @@ export default function Analytics() {
     window.addEventListener('load', handleLoad);
 
     return () => {
-      observer.disconnect();
+      try {
+        observer.disconnect();
+      } catch (e) {
+        // Observer may not be initialized
+      }
       window.removeEventListener('load', handleLoad);
     };
   }, [pathname, trackCustomEvent]);
@@ -394,25 +413,25 @@ export default function Analytics() {
     };
   }, [trackCustomEvent]);
 
-  // Cookie consent tracking
+  // Enhanced tracking for consented users
   useEffect(() => {
     const enableEnhancedTracking = () => {
       // Enable Facebook Pixel if user consented
       if (typeof window !== 'undefined' && window.fbq) {
-        window.fbq('track', 'PageView');
+        try {
+          window.fbq('track', 'PageView');
+        } catch (e) {
+          console.log('Facebook Pixel error:', e);
+        }
       }
-
-      // Enable other marketing pixels here
     };
 
-    const cookieConsent = localStorage.getItem('cookie_consent');
     if (cookieConsent === 'accepted') {
-      // Enable additional tracking for users who consented
       enableEnhancedTracking();
     }
-  }, []);
+  }, [cookieConsent]);
 
-  // Conversion tracking helpers (these will be called from your conversion components)
+  // Conversion tracking helpers
   const trackConversionStart = useCallback((tool: string, fileType: string, fileSize: number) => {
     const event = new CustomEvent('file_upload_start', {
       detail: { tool, fileType, fileSize }
@@ -454,6 +473,5 @@ export default function Analytics() {
     }
   }, [trackConversionStart, trackConversionComplete, trackDownload, trackError, trackCustomEvent]);
 
-  // This component doesn't render anything
   return null;
 }

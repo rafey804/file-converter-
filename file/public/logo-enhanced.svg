@@ -1,0 +1,79 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main circular background with gradient -->
+  <defs>
+    <radialGradient id="mainGradient" cx="0.5" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="50%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </radialGradient>
+    <linearGradient id="documentGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="arrowGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main circle -->
+  <circle cx="60" cy="60" r="55" fill="url(#mainGradient)" stroke="white" stroke-width="2"/>
+
+  <!-- Inner circle for depth -->
+  <circle cx="60" cy="60" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <circle cx="60" cy="60" r="35" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+  <!-- Document icon -->
+  <g transform="translate(35, 25)">
+    <!-- Document body -->
+    <rect x="0" y="8" width="32" height="40" rx="2" fill="url(#documentGradient)" stroke="white" stroke-width="1.5"/>
+    <!-- Document fold -->
+    <path d="M24 8 L32 8 L32 16 Z" fill="rgba(255,255,255,0.3)"/>
+    <path d="M24 8 L24 16 L32 16" stroke="rgba(0,0,0,0.1)" stroke-width="1" fill="none"/>
+
+    <!-- Document lines -->
+    <rect x="4" y="16" width="20" height="1.5" rx="0.5" fill="rgba(255,255,255,0.8)"/>
+    <rect x="4" y="20" width="16" height="1.5" rx="0.5" fill="rgba(255,255,255,0.6)"/>
+    <rect x="4" y="24" width="18" height="1.5" rx="0.5" fill="rgba(255,255,255,0.6)"/>
+    <rect x="4" y="28" width="14" height="1.5" rx="0.5" fill="rgba(255,255,255,0.4)"/>
+  </g>
+
+  <!-- Conversion arrows -->
+  <g transform="translate(60, 60)">
+    <!-- Circular arrow path -->
+    <path d="M -20 -8 Q -25 -15 -15 -20 Q 0 -25 15 -20 Q 25 -15 20 -8"
+          stroke="url(#arrowGradient)" stroke-width="3" fill="none"
+          stroke-linecap="round"/>
+    <path d="M 20 -8 Q 25 15 15 20 Q 0 25 -15 20 Q -25 15 -20 8"
+          stroke="url(#arrowGradient)" stroke-width="3" fill="none"
+          stroke-linecap="round"/>
+
+    <!-- Arrow heads -->
+    <polygon points="17,-6 23,-8 19,-12" fill="url(#arrowGradient)"/>
+    <polygon points="-17,6 -23,8 -19,12" fill="url(#arrowGradient)"/>
+  </g>
+
+  <!-- Format indicators -->
+  <g transform="translate(60, 60)">
+    <!-- PDF indicator -->
+    <rect x="-35" y="-5" width="12" height="8" rx="1" fill="rgba(239, 68, 68, 0.9)" stroke="white" stroke-width="0.5"/>
+    <text x="-29" y="1" font-family="Arial, sans-serif" font-size="3" font-weight="bold" fill="white" text-anchor="middle">PDF</text>
+
+    <!-- IMG indicator -->
+    <rect x="23" y="-5" width="12" height="8" rx="1" fill="rgba(34, 197, 94, 0.9)" stroke="white" stroke-width="0.5"/>
+    <text x="29" y="1" font-family="Arial, sans-serif" font-size="3" font-weight="bold" fill="white" text-anchor="middle">IMG</text>
+  </g>
+
+  <!-- Decorative elements -->
+  <circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.6)"/>
+  <circle cx="95" cy="35" r="1.5" fill="rgba(255,255,255,0.4)"/>
+  <circle cx="20" cy="95" r="1.5" fill="rgba(255,255,255,0.4)"/>
+  <circle cx="100" cy="90" r="2" fill="rgba(255,255,255,0.6)"/>
+
+  <!-- Sparkle effects -->
+  <g stroke="rgba(255,255,255,0.8)" stroke-width="1" fill="none">
+    <path d="M15 45 L17 47 L15 49 L13 47 Z"/>
+    <path d="M105 75 L107 77 L105 79 L103 77 Z"/>
+    <path d="M90 15 L92 17 L90 19 L88 17 Z"/>
+  </g>
+</svg>
